@@ -8,5 +8,9 @@ from sklearn.metrics import mean_squared_error
 from sklearn.preprocessing import PolynomialFeatures
 from sklearn.pipeline import make_pipeline
 
+"""
+Entry Point to Call Training, Prediction and Evaluation
+
+"""
 
 
