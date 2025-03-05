@@ -77,8 +77,8 @@ df_data_distribution = df_geo_data.groupby('country')['image_name'].count().rese
 df_filtered_distribution = df_geo_data.groupby('country')['image_name'].count().reset_index().rename(
     columns={'image_name': 'frequency'})
 
-df_geo_data.head(10)
-df_filtered_distribution
+#df_geo_data.head(10)
+#df_filtered_distribution
 
 # %%
 # select a random country
