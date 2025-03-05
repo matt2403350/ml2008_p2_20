@@ -30,13 +30,13 @@ random_seed = 123  # Set a fixed random seed for reproducibility
 batch_size = 32  # Define the batch size for training data
 
 working_dir = pathlib.Path().absolute()  # Path to the working directory
-geo_data_dir = pathlib.Path(os.path.join(working_dir, 'SEA_IMG'))  # Path to the data directory
+geo_data_dir = pathlib.Path(os.path.join(working_dir, 'SEA_IMG_augmented'))  # Path to the data directory
 
 geo_train_dir = pathlib.Path(os.path.join(working_dir, 'train_dataset'))  # Path to the train dataset directory
 geo_test_dir = pathlib.Path(os.path.join(working_dir, 'test_dataset'))  # Path to the test dataset directory
 
-print(working_dir)
-print(geo_data_dir)
+#print(working_dir)
+#print(geo_data_dir)
 
 
 # %%
