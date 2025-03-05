@@ -25,7 +25,7 @@ transform = transforms.Compose([
 # Load dataset
 hf_ds = load_dataset("marcelomoreno26/geoguessr")
 hf_train = hf_ds['train']
-hf_train = hf_train.map(transform, remove_columns=['label'], batched=True)
+hf_train = hf_train.map(hf_transform, remove_columns=['label'], batched=True)
 COUNTRY_LIST = ['Singapore', 'Malaysia', 'Indonesia', 'Thailand', 'Philippines', 'Cambodia']
 hf_train = hf_train.filter(lambda x: x['country'] in COUNTRY_LIST)
 
