@@ -35,7 +35,6 @@ combined_dataset = ConcatDataset([hf_train, train_dataset])
 train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
 
 print(train_loader)
-breakpoint()
 
 # Model setup
 num_classes = len(train_dataset.classes)  # Automatically detect number of classes
