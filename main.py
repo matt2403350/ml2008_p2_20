@@ -7,7 +7,7 @@ from src.train import train_model
 from src.predict import predict_image
 from src.evaluate import evaluate_model
 
-MODEL_PATH = "models/country_classifier.pth"
+MODEL_PATH = "src/models/country_classifier.pth"
 
 
 def main():
@@ -22,7 +22,7 @@ def main():
         train_model()  # Train and save model
     elif args.evaluate:
         if os.path.exists(MODEL_PATH):
-            evaluate_model()
+            evaluate_model()  # Evaluate model
         else:
             print("Model not found. Train it first using --train.")
     elif args.predict:
@@ -31,7 +31,7 @@ def main():
         else:
             print("Model not found. Train it first using --train.")
     else:
-        print("No arguments provided. Use --train, --evaluate, or --predict <image_path>.")
+        print("No arguments provided. Use --train, --evaluate, or --predict <image_path> or -h.")
 
 
 if __name__ == "__main__":

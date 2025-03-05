@@ -7,7 +7,7 @@ import torch.optim as optim
 import torch.nn as nn
 from torch.utils.data import DataLoader
 from torchvision import datasets, transforms
-from model import CNNClassifier
+from src.model import CNNClassifier
 
 # Define transformations for image preprocessing
 transform = transforms.Compose([
@@ -17,7 +17,7 @@ transform = transforms.Compose([
 ])
 
 # Load dataset
-train_dataset = datasets.ImageFolder(root="train_dataset", transform=transform)
+train_dataset = datasets.ImageFolder(root="src/train_dataset", transform=transform)
 train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
 
 # Model setup

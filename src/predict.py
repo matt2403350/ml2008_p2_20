@@ -2,6 +2,12 @@
 loads a trained model and classifies new images
 """
 import os
+import torch
+import torch.nn as nn
+import torchmetrics
+from torchvision import transforms, datasets
+from torch.utils.data import DataLoader
+
 
 
 def predict_image(image_path):
