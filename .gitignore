@@ -3,6 +3,6 @@
 .ipynb_checkpoints
 __pycache__
 *.pyc
-
+.DS_Store
 train_dataset
 test_dataset

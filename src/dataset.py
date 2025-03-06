@@ -11,7 +11,7 @@ import numpy as np
 import pandas as pd
 
 # Import necessary libraries for image processing
-from PIL import Image
+from PIL import Image, UnidentifiedImageError
 
 # Import necessary libraries for data visualization
 from plotly.offline import init_notebook_mode, iplot
@@ -30,10 +30,10 @@ random_seed = 123  # Set a fixed random seed for reproducibility
 batch_size = 32  # Define the batch size for training data
 
 working_dir = pathlib.Path().absolute()  # Path to the working directory
-geo_data_dir = pathlib.Path(os.path.join(working_dir, 'src/SEA_IMG_augmented'))  # Path to the data directory
+geo_data_dir = pathlib.Path(os.path.join(working_dir, 'SEA_IMG_augmented'))  # Path to the data directory
 
-geo_train_dir = pathlib.Path(os.path.join(working_dir, 'src/train_dataset'))  # Path to the train dataset directory
-geo_test_dir = pathlib.Path(os.path.join(working_dir, 'src/test_dataset'))  # Path to the test dataset directory
+geo_train_dir = pathlib.Path(os.path.join(working_dir, 'train_dataset'))  # Path to the train dataset directory
+geo_test_dir = pathlib.Path(os.path.join(working_dir, 'test_dataset'))  # Path to the test dataset directory
 
 #print(working_dir)
 #print(geo_data_dir)
@@ -44,18 +44,22 @@ geo_test_dir = pathlib.Path(os.path.join(working_dir, 'src/test_dataset'))  # Pa
 def extract_metadata_from_folder(path):
     metadata = []
     for file_path in path.glob('*'):
-        # Get the width and height of the image
-        width, height = Image.open(file_path).size
+        if file_path.name == '.DS_Store':
+            continue  # Skip .DS_Store files
+        try:
+            with Image.open(file_path) as img:
+                width, height = img.size
+                metadata.append({
+                    'country': path.name,
+                    'image_name': file_path.name,
+                    'width': width,
+                    'height': height,
+                    'size': file_path.stat().st_size,
+                    'path': file_path
+                })
+        except UnidentifiedImageError:
 
-        metadata.append({
-            'country': path.name,
-            'image_name': file_path.name,
-            'width': width,
-            'height': height,
-            'size': file_path.stat().st_size,
-            'path': file_path
-        })
-
+            print(f"Warning: Unable to open image {file_path}")
     return metadata
 
 
@@ -109,6 +113,7 @@ with Image.open(random_country.path.values[0]) as img:
     fig.show()
 # %%
 train, test = train_test_split(df_geo_data, test_size=0.05, random_state=123)
+
 
 for pathname, dataset in [
     [geo_train_dir, train],

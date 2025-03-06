@@ -32,6 +32,7 @@ hf_train = hf_train.filter(lambda x: x['country'] in COUNTRY_LIST)
 """
 
 train_dataset = datasets.ImageFolder(root="src/train_dataset", transform=transform)
+
 """combined_dataset = ConcatDataset([hf_train, train_dataset])"""
 
 train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
@@ -59,7 +60,7 @@ def train_model():
             #file_paths = [train_dataset.samples[i][0] for i in labels.tolist()]
 
             # Print image paths and their corresponding labels
-            print(f"Training Labels: {images}")
+            print(f"Training Labels: {labels}")
             optimizer.zero_grad()
             outputs = model(images)
             loss = criterion(outputs, labels)
