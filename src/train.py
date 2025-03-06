@@ -7,8 +7,8 @@ import torch.optim as optim
 import torch.nn as nn
 from torch.utils.data import DataLoader, ConcatDataset
 from torchvision import datasets, transforms
-from model import CNNClassifier
-from datasets import load_dataset
+from src.model import CNNClassifier
+#from datasets import load_dataset
 
 def hf_transform(dataset):
     dataset['country'] = dataset['label']
@@ -22,19 +22,21 @@ transform = transforms.Compose([
     transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5])  # Normalize
 ])
 
+"""
 # Load dataset
 hf_ds = load_dataset("marcelomoreno26/geoguessr")
 hf_train = hf_ds['train']
 hf_train = hf_train.map(hf_transform, remove_columns=['label'], batched=True)
 COUNTRY_LIST = ['Singapore', 'Malaysia', 'Indonesia', 'Thailand', 'Philippines', 'Cambodia']
 hf_train = hf_train.filter(lambda x: x['country'] in COUNTRY_LIST)
+"""
 
 train_dataset = datasets.ImageFolder(root="src/train_dataset", transform=transform)
-combined_dataset = ConcatDataset([hf_train, train_dataset])
+"""combined_dataset = ConcatDataset([hf_train, train_dataset])"""
 
 train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
 
-print(train_loader)
+
 
 # Model setup
 num_classes = len(train_dataset.classes)  # Automatically detect number of classes
