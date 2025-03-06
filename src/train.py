@@ -59,7 +59,7 @@ def train_model():
             #file_paths = [train_dataset.samples[i][0] for i in labels.tolist()]
 
             # Print image paths and their corresponding labels
-            print(f"Training Labels: {labels}")
+            print(f"Training Labels: {images}")
             optimizer.zero_grad()
             outputs = model(images)
             loss = criterion(outputs, labels)

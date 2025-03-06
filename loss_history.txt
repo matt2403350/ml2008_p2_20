@@ -1,2 +1,4 @@
 Epoch 1/10, Loss: 1.6591
 Epoch 2/10, Loss: 1.4304
+Epoch 2/10, Loss: 1.4144
+Epoch 3/10, Loss: 1.3149
