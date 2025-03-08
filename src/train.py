@@ -1,90 +1,90 @@
 """
-trains the model and saves to models directory
+Trains the model using SVM and saves it to the models directory.
 """
+
+import joblib
 import os
-import torch
-import torch.optim as optim
-import torch.nn as nn
-from torch.utils.data import DataLoader, ConcatDataset
-from torchvision import datasets, transforms
-from src.model import CNNClassifier
-#from datasets import load_dataset
+import cv2
+import numpy as np
+from skimage.feature import hog
+from sklearn.svm import SVC
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import accuracy_score
 
-def hf_transform(dataset):
-    dataset['country'] = dataset['label']
-    
-    return dataset
+# Load the train-test split dataset prepared by dataset.py
+train_data_path = "train_dataset"
+test_data_path = "test_dataset"
 
-# Define transformations for image preprocessing
-transform = transforms.Compose([
-    transforms.Resize((224, 224)),  # Resize to match model input size
-    transforms.ToTensor(),
-    transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5])  # Normalize
-])
+# Image size from dataset.py
+img_size = (224, 224)
 
-"""
-# Load dataset
-hf_ds = load_dataset("marcelomoreno26/geoguessr")
-hf_train = hf_ds['train']
-hf_train = hf_train.map(hf_transform, remove_columns=['label'], batched=True)
-COUNTRY_LIST = ['Singapore', 'Malaysia', 'Indonesia', 'Thailand', 'Philippines', 'Cambodia']
-hf_train = hf_train.filter(lambda x: x['country'] in COUNTRY_LIST)
-"""
+# Define HOG feature extraction parameters
+hog_params = {
+    'orientations': 9,
+    'pixels_per_cell': (8, 8),
+    'cells_per_block': (2, 2),
+    'block_norm': 'L2-Hys'
+}
 
-train_dataset = datasets.ImageFolder(root="src/train_dataset", transform=transform)
+def extract_features_from_directory(directory):
+    """
+    Extracts HOG features from images in a given directory.
+    """
+    X, y = [], []
+    for country in sorted(os.listdir(directory)):  # Sort to maintain label consistency
+        country_path = os.path.join(directory, country)
+        if os.path.isdir(country_path):
+            for image_name in os.listdir(country_path):
+                image_path = os.path.join(country_path, image_name)
+                image = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
 
-"""combined_dataset = ConcatDataset([hf_train, train_dataset])"""
+                if image is None:
+                    print(f"⚠️ Warning: Could not read {image_path}, skipping.")
+                    continue
 
-train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
+                image = cv2.resize(image, img_size)  # Resize for consistency
+                features = hog(image, **hog_params)  # Extract HOG features
 
+                X.append(features)
+                y.append(country)
 
+    return np.array(X), np.array(y)
 
-# Model setup
-num_classes = len(train_dataset.classes)  # Automatically detect number of classes
-model = CNNClassifier(num_classes)
-criterion = nn.CrossEntropyLoss()
-optimizer = optim.Adam(model.parameters(), lr=0.001)
+# Extract features from train and test sets
+print("🚀 Extracting HOG features from training images...")
+X_train, y_train = extract_features_from_directory(train_data_path)
+print("✅ Training features extracted.")
 
-epochs = 10  # Number of training epochs
+print("🚀 Extracting HOG features from test images...")
+X_test, y_test = extract_features_from_directory(test_data_path)
+print("✅ Test features extracted.")
 
-loss_history = []
+# Standardize features (SVM performs better with scaled data)
+scaler = StandardScaler()
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
 
+# Train an optimized SVM model
+print("🚀 Training SVM...")
+svm_model = SVC(kernel='rbf', C=50, gamma='scale')  # RBF kernel for non-linear separation
+svm_model.fit(X_train, y_train)
 
-def train_model():
+# Evaluate SVM model
+y_pred = svm_model.predict(X_test)
+accuracy = accuracy_score(y_test, y_pred)
 
-    model.train()
-    for epoch in range(epochs):
-        running_loss = 0.0
-        for images, labels in train_loader:
-            # Get file paths from dataset
-            #file_paths = [train_dataset.samples[i][0] for i in labels.tolist()]
+print(f"✅ SVM Model Accuracy: {accuracy:.4f}")
 
-            # Print image paths and their corresponding labels
-            print(f"Training Labels: {labels}")
-            optimizer.zero_grad()
-            outputs = model(images)
-            loss = criterion(outputs, labels)
-            loss.backward()
-            optimizer.step()
-            running_loss += loss.item()
+# Save the trained SVM model and preprocessing tools
+# Save the extracted dataset
+os.makedirs("models", exist_ok=True)
+joblib.dump((X_train, X_test, y_train, y_test), "models/dataset.pkl")  # ✅ Save dataset
+print("✅ Dataset saved as dataset.pkl")
 
-        epoch_loss = running_loss / len(train_loader)
-        loss_history.append(epoch_loss)
+# Save the trained SVM model and preprocessing tools
+joblib.dump(svm_model, "models/svm_model.pkl")
+joblib.dump(scaler, "models/scaler.pkl")
+joblib.dump(sorted(os.listdir(train_data_path)), "models/label_encoder.pkl")  # Save label mapping
+print("✅ SVM model and preprocessing tools saved successfully!")
 
-        print(f"Epoch {epoch + 1}/{epochs}, Loss: {epoch_loss:.4f}")
-
-        with open ("loss_history.txt", "a") as f:
-            f.write(f"Epoch {epoch + 1}/{epochs}, Loss: {epoch_loss:.4f}\n")
-
-    print(f"Loss History saved to {os.path.abspath('loss_history.txt')}")
-
-
-
-    # Save the trained model
-    os.makedirs("models", exist_ok=True)
-    torch.save(model.state_dict(), "models/country_classifier.pth")
-    print("Model saved successfully!")
-
-
-if __name__ == "__main__":
-    train_model()
+print("✅ SVM model and preprocessing tools saved successfully!")
