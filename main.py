@@ -7,7 +7,7 @@ from src.train import train_model
 from src.predict import predict_image
 from src.evaluate import evaluate_model
 
-MODEL_PATH = "src/models/country_classifier.pth"
+MODEL_PATH = "models/country_classifier.pth"
 
 
 def main():
@@ -16,6 +16,7 @@ def main():
     parser.add_argument("--train", action="store_true", help="Train the model")
     parser.add_argument("--evaluate", action="store_true", help="Evaluate the model")
     parser.add_argument("--predict", type=str, help="Classify an image")
+    parser.add_argument("train_classical", action="store_true", help="Train & Evaluate Classical Models")
     args = parser.parse_args()
 
     if args.train:

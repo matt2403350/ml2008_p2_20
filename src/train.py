@@ -7,7 +7,7 @@ import torch.optim as optim
 import torch.nn as nn
 from torch.utils.data import DataLoader, ConcatDataset
 from torchvision import datasets, transforms
-from src.model import CNNClassifier
+from src.model import CNNFeatureExtractor
 #from datasets import load_dataset
 
 def hf_transform(dataset):
@@ -41,7 +41,7 @@ train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
 
 # Model setup
 num_classes = len(train_dataset.classes)  # Automatically detect number of classes
-model = CNNClassifier(num_classes)
+model = CNNFeatureExtractor(num_classes)
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.Adam(model.parameters(), lr=0.001)
 
@@ -83,7 +83,7 @@ def train_model():
     # Save the trained model
     os.makedirs("models", exist_ok=True)
     torch.save(model.state_dict(), "models/country_classifier.pth")
-    print("Model saved successfully!")
+    print(f"Model saved successfully!{os.path.abspath('models/country_classifier.pth')}")
 
 
 if __name__ == "__main__":

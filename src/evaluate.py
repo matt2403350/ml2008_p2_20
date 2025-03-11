@@ -9,7 +9,7 @@ from torchvision import datasets, transforms
 import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
-from src.model import CNNClassifier
+from src.model import CNNFeatureExtractor
 from sklearn.metrics import confusion_matrix, classification_report
 
 # Define transformations (same as training)
@@ -25,7 +25,7 @@ test_loader = DataLoader(test_dataset, batch_size=32, shuffle=False)
 
 # Load model
 num_classes = len(test_dataset.classes)
-model = CNNClassifier(num_classes)
+model = CNNFeatureExtractor(num_classes)
 model.load_state_dict(torch.load("src/models/country_classifier.pth"))
 model.eval()
 
