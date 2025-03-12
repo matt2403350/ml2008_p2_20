@@ -6,7 +6,8 @@ from xgboost import XGBClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import accuracy_score, classification_report
-from sklearn.model_selection import GridSearchCV
+from sklearn.experimental import enable_halving_search_cv
+from sklearn.model_selection import HalvingGridSearchCV
 import joblib
 
 # Load extracted features and labels
@@ -39,13 +40,13 @@ knn.fit(X_train, y_train)
 print("Training XGBoost with hyperparameter tuning...")
 xgb_params = {
     'n_estimators': [100, 150],
-    'max_depth': [3, 5, 7],
-    'learning_rate': [0.01, 0.1, 0.2],
-    'subsample': [0.8, 1.0],
+    'max_depth': [3, 5],
+    'learning_rate': [0.1],
+    'subsample': [0.8],
     'tree_method': ['hist']
 }
 
-grid_search = GridSearchCV(XGBClassifier(eval_metric='mlogloss'), xgb_params, cv=2, scoring='accuracy', n_jobs=-1)
+grid_search = HalvingGridSearchCV(XGBClassifier(eval_metric='mlogloss', tree_method="hist"), xgb_params, cv=2, scoring='accuracy', n_jobs=-1)
 grid_search.fit(X_train, y_train)
 
 best_xgb = grid_search.best_estimator_
