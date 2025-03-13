@@ -12,7 +12,7 @@ transform = transforms.Compose([
 ])
 
 # Load dataset
-dataset = datasets.ImageFolder(root="train_dataset", transform=transform)
+dataset = datasets.ImageFolder(root="feature_extracting", transform=transform)
 dataloader = DataLoader(dataset, batch_size=32, shuffle=False)
 
 # Load trained CNN model
