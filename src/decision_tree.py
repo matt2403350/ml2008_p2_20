@@ -4,7 +4,8 @@ from torchvision import datasets, transforms
 import numpy as np
 from sklearn.tree import DecisionTreeClassifier
 import joblib
-from sklearn.metrics import log_loss
+from sklearn.metrics import accuracy_score, classification_report
+from sklearn.model_selection import train_test_split
 
 # Custom dataset to combine raw images and pre-extracted features
 class CombinedDataset(Dataset):
@@ -34,41 +35,16 @@ class CombinedDataset(Dataset):
 def npy_loader(path):
     return np.load(path)
 
-def main():
-    # Define transformations for image preprocessing
-    transform = transforms.Compose([
-        transforms.Resize((224, 224)),  # Resize to match model input size
-        transforms.ToTensor(),
-        transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5])  # Normalize
-    ])
+# Flatten the images and concatenate with features
+def prepare_data(images, features):
+    images_flat = images.view(images.size(0), -1)  # Flatten images to (batch_size, 3*224*224)
+    combined_data = torch.cat((images_flat, features), dim=1)  # Concatenate along feature dimension
+    return combined_data
 
-    # Load the pre-extracted features
-    features = npy_loader("src/models/features/features.npy")
-    print("Features shape:", features.shape)
 
-    # Load the raw image dataset
-    train_dataset = datasets.ImageFolder(root="src/train_dataset", transform=transform)
-    print("Number of images in dataset:", len(train_dataset))
-
-    # Create the combined dataset
-    combined_dataset = CombinedDataset(train_dataset, features)
-
-    # Create a DataLoader for the combined dataset
-    train_loader = DataLoader(combined_dataset, shuffle=True)
-
-    # Example: Iterate through the DataLoader
-    # for batch_idx, (images, features, labels) in enumerate(train_loader):
-    #     print(f"Batch {batch_idx}:")
-    #     print("Images shape:", images.shape)  # Should be (batch_size, 3, 224, 224)
-    #     print("Features shape:", features.shape)  # Should be (batch_size, feature_dim)
-    #     print("Labels shape:", labels.shape)  # Should be (batch_size,)
-    #     break  # Just show the first batch for demonstration
-
-    # Flatten the images and concatenate with features
-    def prepare_data(images, features):
-        images_flat = images.view(images.size(0), -1)  # Flatten images to (batch_size, 3*224*224)
-        combined_data = torch.cat((images_flat, features), dim=1)  # Concatenate along feature dimension
-        return combined_data
+def train(train_dataset):
+    # Create a DataLoader for the train dataset
+    train_loader = DataLoader(train_dataset, shuffle=True)
 
     # Collect training data
     X_list, y_list = [], []
@@ -89,11 +65,62 @@ def main():
     dt_model.fit(X_train, y_train)
 
     # Save the trained model
-    joblib.dump(dt_model, "src/models/decision_tree2.pkl")
+    joblib.dump(dt_model, "src/models/decision_tree3.pkl")
 
     # Performance check on training set
     train_accuracy = dt_model.score(X_train, y_train)
     print(f"Training Accuracy: {train_accuracy:.4f}")
+
+def test(test_dataset):
+    # load trained model
+    dt_model = joblib.load("src/models/decision_tree3.pkl")
+
+    test_loader = DataLoader(test_dataset, shuffle=True)
+
+    # Collect testing data
+    X_list, y_list = [], []
+    for images, features, labels in test_loader:
+        X = prepare_data(images, features).numpy()
+        y = labels.numpy()
+        X_list.append(X)
+        y_list.append(y)
+
+    # Convert collected batches into single arrays
+    X_test = np.vstack(X_list)
+    y_test = np.hstack(y_list)
+
+    print("Final testing data shape:", X_test.shape, y_test.shape)
+
+    y_pred = dt_model.predict(X_test)
+    print(f"Accuracy: {accuracy_score(y_test, y_pred):.4f}")
+    print("Decision Tree Classification Report:")
+    print(classification_report(y_test, y_pred))
+
+    return
+
+def main():
+    # Define transformations for image preprocessing
+    transform = transforms.Compose([
+        transforms.Resize((224, 224)),  # Resize to match model input size
+        transforms.ToTensor(),
+        transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5])  # Normalize
+    ])
+
+    # Load the pre-extracted features
+    features = npy_loader("src/models/features/features.npy")
+    print("Features shape:", features.shape)
+
+    # Load the raw image dataset
+    images = datasets.ImageFolder(root="src/feature_extracting", transform=transform)
+    print("Number of images in dataset:", len(images))
+
+    # Create the combined dataset
+    combined_dataset = CombinedDataset(images, features)
+
+    train_dataset, test_dataset = train_test_split(features, test_size=0.2, random_state=42)
+
+    train(train_dataset)
+    test(test_dataset)
 
 if __name__ == "__main__":
     main()
