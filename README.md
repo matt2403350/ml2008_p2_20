@@ -7,13 +7,14 @@ INF2008 Machine Learning Project on Country Classification
 Script for creating a dataset from the images in the dataset folder. The dataset is saved as a pickle file.
 
 2. model.py:
-Script for creating a Convolutional Neural Network model using Keras.
+Script for creating a Convolutional Neural Network for Feature Extraction, model is saved as a pickle file.
 
-3. train.py:
-Script for training the model using the dataset created by dataset.py.
+3. extract_features.py:
+Script for extracting features from the CNN model and saving them as a pickle file. (features.npy and labels.npy)
 
-4. evaluate.py:
-Script for evaluating the model using the test dataset.
+4. train_classical.py:
+Script for training/evaluating the classical machine learning models and classifying the images. 
+utilizes feature extracted from the CNN model.
 
 5. predict.py:
-Script for predicting the class of an image using the trained model.
+Script for predicting the class of an image using the saved .pkl models.

@@ -13,7 +13,7 @@ MODEL_PATH = "models/country_classifier.pth"
 def main():
 
     parser = argparse.ArgumentParser(description="Image Classification Project")
-    parser.add_argument("--train", action="store_true", help="Train the model")
+    #parser.add_argument("--train", action="store_true", help="Train the model")
     parser.add_argument("--evaluate", action="store_true", help="Evaluate the model")
     parser.add_argument("--predict", type=str, help="Classify an image")
     parser.add_argument("train_classical", action="store_true", help="Train & Evaluate Classical Models")
