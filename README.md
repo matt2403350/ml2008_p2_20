@@ -1,7 +1,7 @@
 # ml2008
 INF2008 Machine Learning Project on Country Classification
 
-# Scripts for Image Classification using Convolutional Neural Networks
+# Scripts for Image Classification using CNN as feature extractor and classical machine learning models for classification.
 
 1. dataset.py:
 Script for creating a dataset from the images in the dataset folder. The dataset is saved as a pickle file.
