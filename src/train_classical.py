@@ -8,6 +8,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import accuracy_score, classification_report
 from sklearn.experimental import enable_halving_search_cv
 from sklearn.model_selection import HalvingGridSearchCV
+from sklearn.model_selection import GridSearchCV
 import joblib
 
 # Load extracted features and labels
@@ -26,16 +27,34 @@ print("Training SVM...")
 svm = SVC(kernel="linear")
 svm.fit(X_train, y_train)
 
+#Hyperparameter tuning for Random Forest
+#print("Tuning Random Forest...")
+rf_params = {
+    'n_estimators': [300],  # Number of trees
+    'max_depth': [20],  # Maximum tree depth
+    'min_samples_split': [5],  # Minimum samples to split a node
+    'min_samples_leaf': [2]  # Minimum samples per leaf
+}
+"""
+#Finding best Hyperparameter for Random Forest
+grid_search_rf = GridSearchCV(RandomForestClassifier(random_state=42), rf_params, cv=2, scoring='accuracy', n_jobs=-1)
+grid_search_rf.fit(X_train, y_train)
+best_rf = grid_search_rf.best_estimator_
+print("Best Random Forest Parameters:", grid_search_rf.best_params_)
+"""
+
 # Train Random Forest
 print("Training Random Forest...")
-rf = RandomForestClassifier(n_estimators=100, random_state=42)
+rf = RandomForestClassifier( random_state=42, n_estimators=300, max_depth=20, min_samples_split=5, min_samples_leaf=2)
 rf.fit(X_train, y_train)
+
 
 # Train k-Nearest Neighbors
 print("Training k-NN...")
 knn = KNeighborsClassifier(n_neighbors=5)
 knn.fit(X_train, y_train)
 
+"""
 # Train XGBoost with hyperparameter tuning
 print("Training XGBoost with hyperparameter tuning...")
 xgb_params = {
@@ -51,7 +70,7 @@ grid_search.fit(X_train, y_train)
 
 best_xgb = grid_search.best_estimator_
 print("Best XGBoost Parameters:", grid_search.best_params_)
-
+"""
 """
 print("Training XGBoost...")
 xgb = XGBClassifier(eval_metric='mlogloss')
@@ -62,7 +81,7 @@ xgb.fit(X_train, y_train)
 joblib.dump(svm, "models/svm_model.pkl")
 joblib.dump(rf, "models/random_forest_model.pkl")
 joblib.dump(knn, "models/knn_model.pkl")
-joblib.dump(best_xgb, "models/xgboost_model.pkl")
+#joblib.dump(best_xgb, "models/xgboost_model.pkl")
 
 print("All models saved successfully!")
 
@@ -87,6 +106,7 @@ print(f"k-NN Accuracy: {knn_acc * 100:.2f}%")
 print("k-NN Classification Report:")
 print(classification_report(y_test, knn_preds))
 
+"""
 # Evaluate XGBoost
 xgb_preds = best_xgb.predict(X_test)
 xgb_acc = accuracy_score(y_test, xgb_preds)
@@ -94,4 +114,5 @@ print(f"XGBoost Accuracy: {xgb_acc * 100:.2f}%")
 print("XGBoost Classification Report:")
 print(classification_report(y_test, xgb_preds))
 
+"""
 
