@@ -23,6 +23,8 @@ labels = np.load("models/labels.npy")
 # Standardize features (important for SVM & k-NN)
 scaler = StandardScaler()
 features = scaler.fit_transform(features)
+joblib.dump(scaler, "models/scaler.pkl")
+print("✅ Saved scaler.pkl")
 
 # Split data into training and testing sets
 X_train, X_test, y_train, y_test = train_test_split(features, labels, test_size=0.2, random_state=42)
