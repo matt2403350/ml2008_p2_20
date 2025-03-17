@@ -5,11 +5,16 @@ from sklearn.neighbors import KNeighborsClassifier
 from xgboost import XGBClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import accuracy_score, classification_report
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 from sklearn.experimental import enable_halving_search_cv
 from sklearn.model_selection import HalvingGridSearchCV
 from sklearn.model_selection import GridSearchCV
+import matplotlib.pyplot as plt
+import seaborn as sns
 import joblib
+
+# Define country labels
+country_labels = ["Cambodia", "Indonesia", "Malaysia", "Philippines", "Singapore", "Thailand"]
 
 # Load extracted features and labels
 features = np.load("models/features.npy")
@@ -85,6 +90,8 @@ joblib.dump(knn, "models/knn_model.pkl")
 
 print("All models saved successfully!")
 
+
+"""
 # Evaluate SVM
 svm_preds = svm.predict(X_test)
 svm_acc = accuracy_score(y_test, svm_preds)
@@ -105,7 +112,7 @@ knn_acc = accuracy_score(y_test, knn_preds)
 print(f"k-NN Accuracy: {knn_acc * 100:.2f}%")
 print("k-NN Classification Report:")
 print(classification_report(y_test, knn_preds))
-
+"""
 """
 # Evaluate XGBoost
 xgb_preds = best_xgb.predict(X_test)
@@ -115,4 +122,44 @@ print("XGBoost Classification Report:")
 print(classification_report(y_test, xgb_preds))
 
 """
+
+# Evaluate models and plot confusion matrices
+models = {"SVM": svm, "Random Forest": rf, "k-NN": knn}
+results = {}
+accuracies = {}
+
+fig, axes = plt.subplots(1, 3, figsize=(15, 5))
+axes = axes.flatten()
+
+for idx, (name, model) in enumerate(models.items()):
+    print(f"Evaluating {name}...")
+    preds = model.predict(X_test)
+    acc = accuracy_score(y_test, preds)
+    print(f"{name} Accuracy: {acc * 100:.2f}%")
+    print(f"{name} Classification Report:\n{classification_report(y_test, preds)}")
+    results[name] = (acc, preds)
+    accuracies[name] = acc
+
+    # Compute confusion matrix
+    cm = confusion_matrix(y_test, preds)
+    sns.heatmap(cm, annot=True, fmt="d", cmap="Blues", xticklabels=country_labels, yticklabels=country_labels, ax=axes[idx])
+    axes[idx].set_title(f"{name} Confusion Matrix")
+    axes[idx].set_xlabel("Predicted Country")
+    axes[idx].set_ylabel("Actual Country")
+
+plt.tight_layout()
+plt.show()
+
+# Plot accuracy comparison
+plt.figure(figsize=(8, 5))
+names = list(accuracies.keys())
+values = list(accuracies.values())
+
+sns.barplot(x=names, y=values, hue=names, dodge=False, palette="viridis", legend=False)
+plt.xlabel("Model")
+plt.ylabel("Accuracy")
+plt.title("Accuracy Comparison of Classical Models")
+plt.ylim(0, 1)
+plt.show()
+
 
