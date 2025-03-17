@@ -18,3 +18,10 @@ utilizes feature extracted from the CNN model.
 
 5. predict.py:
 Script for predicting the class of an image using the saved .pkl models.
+
+
+To evaluate the models, run the following commands:
+python/python3 train_classical.py
+
+To Predict, run the following commands:
+python/python3 predict.py
