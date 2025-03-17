@@ -24,4 +24,4 @@ To evaluate the models, run the following commands:
 python/python3 train_classical.py
 
 To Predict, run the following commands:
-python/python3 predict.py
+python3 predict.py "FILE-PATH" --model "rf"

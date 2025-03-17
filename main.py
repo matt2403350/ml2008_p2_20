@@ -7,7 +7,7 @@ from src.train import train_model
 from src.predict import predict_image
 from src.evaluate import evaluate_model
 
-MODEL_PATH = "models/country_classifier.pth"
+MODEL_PATH = "src/models/country_classifier.pth"
 
 
 def main():
@@ -15,8 +15,11 @@ def main():
     parser = argparse.ArgumentParser(description="Image Classification Project")
     parser.add_argument("--train", action="store_true", help="Train the model")
     parser.add_argument("--evaluate", action="store_true", help="Evaluate the model")
-    parser.add_argument("--predict", type=str, help="Classify an image")
     parser.add_argument("train_classical", action="store_true", help="Train & Evaluate Classical Models")
+    parser.add_argument("--predict", type=str, help="Classify an image (provide image path)")
+    parser.add_argument("--model", type=str, choices=["svm", "rf", "knn"], default="rf",
+                        help="Select model for prediction (default: rf)")
+
     args = parser.parse_args()
 
     if args.train:
@@ -28,7 +31,8 @@ def main():
             print("Model not found. Train it first using --train.")
     elif args.predict:
         if os.path.exists(MODEL_PATH):
-            predict_image(args.predict)
+            model_type = args.model if args.model else "rf"  # Default to SVM
+            predict_image(args.predict,model_type)
         else:
             print("Model not found. Train it first using --train.")
     else:

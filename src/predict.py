@@ -18,15 +18,15 @@ scaler = joblib.load("models/scaler.pkl")  # StandardScaler (used during trainin
 svm_model = joblib.load("models/svm_model.pkl")  # SVM Model
 rf_model = joblib.load("models/random_forest_model.pkl")  # Random Forest Model
 knn_model = joblib.load("models/knn_model.pkl")  # k-NN Model
-xgb_model = joblib.load("models/xgboost_model.pkl")  # XGBoost Model
+#xgb_model = joblib.load("models/xgboost_model.pkl")  # XGBoost Model
 
 # 🔹 Load dataset folder names dynamically (to map label index → country name)
 dataset_path = "feature_extracting"  # Ensure this is the correct dataset directory
-import os
-country_names = sorted(os.listdir(dataset_path))  # Sorted folder names match label order
+
+country_names = sorted([name for name in os.listdir(dataset_path) if not name.startswith('.')]) #ignore hidden files
 
 # 🔹 Load the trained CNN model
-num_classes = len(country_names)  # Update based on dataset size
+num_classes = 6  # Update based on dataset size
 model = CNNFeatureExtractor(num_classes)  # Load same CNN model used in training
 model.load_state_dict(torch.load("models/country_classifier.pth"))
 model.eval()  # Set to evaluation mode
@@ -66,10 +66,10 @@ def predict_country(image_path, model_name="svm"):
         model = rf_model
     elif model_name == "knn":
         model = knn_model
-    elif model_name == "xgb":
-        model = xgb_model
+    #elif model_name == "xgb":
+        #model = xgb_model
     else:
-        raise ValueError("Invalid model choice. Use 'svm', 'rf', 'knn', or 'xgb'.")
+        raise ValueError("Invalid model choice. Use 'svm', 'rf' or 'knn'")
 
     # Predict
     prediction = model.predict(features)[0]
@@ -80,20 +80,21 @@ def predict_country(image_path, model_name="svm"):
     print(f"✅ Predicted Country ({model_name.upper()}): {country_name}")
     return country_name
 
-if __name__ == "__main__":
-    import argparse
-
-def predict_image(image_path):
+def predict_image(image_path, model_name="rf"):
     """
     Predicts the class of the image
     :param image_path: path to the image
+    :param model_name: model to use (default: svm)
     :return: class of the image
     """
-    return None
+    return predict_country(image_path, model_name)
+
+if __name__ == "__main__":
+    import argparse
     parser = argparse.ArgumentParser(description="Predict country from an image path.")
     parser.add_argument("image_path", type=str, help="Path to the image file.")
-    parser.add_argument("--model", type=str, choices=["svm", "rf", "knn", "xgb"], default="svm",
-                        help="Model to use for prediction (default: SVM).")
+    parser.add_argument("--model", type=str, choices=["svm", "rf", "knn"], default="rf",
+                        help="Model to use for prediction (default: rf).")
     args = parser.parse_args()
 
-    predict_country(args.image_path, model_name=args.model)
+    predict_image(args.image_path, args.model)
