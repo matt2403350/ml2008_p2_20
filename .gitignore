@@ -6,3 +6,5 @@ __pycache__
 .DS_Store
 train_dataset
 test_dataset
+features.npy
+.DS_Store

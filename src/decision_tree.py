@@ -101,7 +101,7 @@ def test(test_dataset):
 def main():
     # Define transformations for image preprocessing
     transform = transforms.Compose([
-        transforms.Resize((224, 224)),  # Resize to match model input size
+        transforms.Resize((768, 331)),  # Resize to match model input size
         transforms.ToTensor(),
         transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5])  # Normalize
     ])
@@ -117,7 +117,7 @@ def main():
     # Create the combined dataset
     combined_dataset = CombinedDataset(images, features)
 
-    train_dataset, test_dataset = train_test_split(features, test_size=0.2, random_state=42)
+    train_dataset, test_dataset = train_test_split(combined_dataset, test_size=0.2, random_state=42)
 
     train(train_dataset)
     test(test_dataset)
