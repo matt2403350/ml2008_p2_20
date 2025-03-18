@@ -22,7 +22,6 @@ import plotly.express as px
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 
-# %%
 # Constants
 img_width = 224  # Image width for preprocessing
 img_height = 224  # Image height for preprocessing
@@ -38,8 +37,6 @@ geo_test_dir = pathlib.Path(os.path.join(working_dir, 'src/test_dataset'))  # Pa
 #print(working_dir)
 #print(geo_data_dir)
 
-
-# %%
 # Function to extract metadata from a give file
 def extract_metadata_from_folder(path):
     metadata = []
@@ -84,34 +81,6 @@ df_filtered_distribution = df_geo_data.groupby('country')['image_name'].count().
 #df_geo_data.head(10)
 #df_filtered_distribution
 
-# %%
-# select a random country
-random_country = df_geo_data.sample(1)
-
-with Image.open(random_country.path.values[0]) as img:
-    fig = go.Figure()
-    fig.add_trace(go.Image(z=img))
-    fig.update_layout(
-        title="Image from the training dataset",
-        template="plotly_white",
-        width=900,
-        height=450
-    )
-
-    fig.update_xaxes(title_text="Width")
-    fig.update_yaxes(title_text="Height")
-
-    fig.add_annotation(
-        x=0.5,
-        y=1.1,
-        xref="paper",
-        yref="paper",
-        text="Country : {}".format(random_country.country.values[0]),
-        showarrow=False
-    )
-
-    fig.show()
-# %%
 train, test = train_test_split(df_geo_data, test_size=0.05, random_state=123)
 
 
