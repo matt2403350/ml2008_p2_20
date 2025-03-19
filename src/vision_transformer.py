@@ -107,7 +107,6 @@ def main():
     model_name = "google/vit-base-patch16-224"
     model = ViTForImageClassification.from_pretrained(model_name)
 
-    # Skip the device handling part if not using GPU
     # Extract and save features
     save_features(model, train_loader, "src/models/features", pre_extracted_features)
 
