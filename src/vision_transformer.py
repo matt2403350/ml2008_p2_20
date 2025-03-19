@@ -42,7 +42,7 @@ def extract_features(model, images):
     return features
 
 # Save extracted features
-def save_features(model, dataloader, save_path, device, pre_extracted_features=None):
+def save_features(model, dataloader, save_path, pre_extracted_features=None):
     model.eval()
     all_features = []
     all_labels = []
@@ -51,11 +51,11 @@ def save_features(model, dataloader, save_path, device, pre_extracted_features=N
         for batch in dataloader:
             if pre_extracted_features is not None:
                 images, features, labels = batch
-                features = features.to(device)
+                features = features
             else:
                 images, labels = batch
 
-            images = images.to(device)
+            # No need for device handling, assume running on CPU
             vit_features = extract_features(model, images)
 
             if pre_extracted_features is not None:
@@ -87,14 +87,14 @@ def main():
         transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5])  # Normalize
     ])
 
-      # Load the pre-extracted features (if available)
+    # Load the pre-extracted features (if available)
     pre_extracted_features = None
-    if os.path.exists("src/models/features/features.npy"):
-        pre_extracted_features = npy_loader("src/models/features/features.npy")
+    if os.path.exists("src/models/features.npy"):
+        pre_extracted_features = npy_loader("src/models/features.npy")
         print("Pre-extracted features shape:", pre_extracted_features.shape)
 
     # Load the raw image dataset
-    train_dataset = datasets.ImageFolder(root="src/train_dataset", transform=transform)
+    train_dataset = datasets.ImageFolder(root="train_dataset", transform=transform)
     print("Number of images in dataset:", len(train_dataset))
 
     # Create the combined dataset
@@ -107,17 +107,9 @@ def main():
     model_name = "google/vit-base-patch16-224"
     model = ViTForImageClassification.from_pretrained(model_name)
 
-    # Move the model to GPU if available
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    model.to(device)
-
-    # Save model weights
-    torch.save(model.state_dict(), "src/models/vit_model.pth")
-    print("Model weights saved successfully.")
-
+    # Skip the device handling part if not using GPU
     # Extract and save features
-    save_features(model, train_loader, "src/models/features", device, pre_extracted_features)
-
+    save_features(model, train_loader, "src/models/features", pre_extracted_features)
 
 if __name__ == "__main__":
     main()
