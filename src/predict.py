@@ -10,22 +10,22 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from torchvision import transforms
 from PIL import Image
-from model import CNNFeatureExtractor  # Import the same CNN model used in training
+from src.model import CNNFeatureExtractor  # Import the same CNN model used in training
 
 # 🔹 Load trained models & preprocessing tools
-scaler = joblib.load("models/scaler.pkl")  # StandardScaler (used during training)
-svm_model = joblib.load("models/svm_model.pkl")  # SVM Model
-rf_model = joblib.load("models/random_forest_model.pkl")  # Random Forest Model
-knn_model = joblib.load("models/knn_model.pkl")  # k-NN Model
+scaler = joblib.load("src/models/scaler.pkl")  # StandardScaler (used during training)
+svm_model = joblib.load("src/models/svm_model.pkl")  # SVM Model
+rf_model = joblib.load("src/models/random_forest_model.pkl")  # Random Forest Model
+knn_model = joblib.load("src/models/knn_model.pkl")  # k-NN Model
 
 # 🔹 Load dataset folder names dynamically (to map label index → country name)
-dataset_path = "feature_extracting"  # Ensure this is the correct dataset directory
+dataset_path = "src/feature_extracting"  # Ensure this is the correct dataset directory
 country_names = sorted([name for name in os.listdir(dataset_path) if not name.startswith('.')])  # Ignore hidden files
 
 # 🔹 Load the trained CNN model (used for feature extraction)
 num_classes = len(country_names)  # Update dynamically
 model = CNNFeatureExtractor(num_classes)
-model.load_state_dict(torch.load("models/country_classifier.pth"))
+model.load_state_dict(torch.load("src/models/country_classifier.pth"))
 model.eval()  # Set to evaluation mode
 
 # 🔹 Define preprocessing transformations (same as training)

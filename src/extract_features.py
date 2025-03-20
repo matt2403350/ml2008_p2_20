@@ -12,13 +12,13 @@ transform = transforms.Compose([
 ])
 
 # Load dataset
-dataset = datasets.ImageFolder(root="feature_extracting", transform=transform)
+dataset = datasets.ImageFolder(root="src/feature_extracting", transform=transform)
 dataloader = DataLoader(dataset, batch_size=32, shuffle=False)
 
 # Load trained CNN model
 num_classes = len(dataset.classes)
 model = CNNFeatureExtractor(num_classes)
-model.load_state_dict(torch.load("models/country_classifier.pth"))
+model.load_state_dict(torch.load("src/models/country_classifier.pth"))
 model.eval()
 
 # Extract features
@@ -36,6 +36,6 @@ features = np.vstack(features)
 labels = np.hstack(labels)
 
 # Save extracted features for ML models
-np.save("models/features.npy", features)
-np.save("models/labels.npy", labels)
+np.save("src/models/features.npy", features)
+np.save("src/models/labels.npy", labels)
 print("Feature extraction complete! Saved as features.npy & labels.npy")

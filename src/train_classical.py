@@ -17,13 +17,13 @@ import joblib
 country_labels = ["Cambodia", "Indonesia", "Malaysia", "Philippines", "Singapore", "Thailand"]
 
 # Load extracted features and labels
-features = np.load("models/features.npy")
-labels = np.load("models/labels.npy")
+features = np.load("src/models/features.npy")
+labels = np.load("src/models/labels.npy")
 
 # Standardize features (important for SVM & k-NN)
 scaler = StandardScaler()
 features = scaler.fit_transform(features)
-joblib.dump(scaler, "models/scaler.pkl")
+joblib.dump(scaler, "src/models/scaler.pkl")
 print("✅ Saved scaler.pkl")
 
 # Split data into training and testing sets
@@ -85,9 +85,9 @@ xgb.fit(X_train, y_train)
 """
 
 # Save trained models
-joblib.dump(svm, "models/svm_model.pkl")
-joblib.dump(rf, "models/random_forest_model.pkl")
-joblib.dump(knn, "models/knn_model.pkl")
+joblib.dump(svm, "src/models/svm_model.pkl")
+joblib.dump(rf, "src/models/random_forest_model.pkl")
+joblib.dump(knn, "src/models/knn_model.pkl")
 #joblib.dump(best_xgb, "models/xgboost_model.pkl")
 
 print("All models saved successfully!")

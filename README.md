@@ -3,8 +3,6 @@ INF2008 Machine Learning Project on Country Classification
 
 # Scripts for Image Classification using CNN as feature extractor and classical machine learning models for classification.
 
-0. load_data.ipynb:
-Jupyter notebook used for fetching data from Huggingface and the initial data exploration.
 
 1. dataset.py:
 Script for creating and splitting the image dataset into train and test dataset, with test dataset consisting of 5% of the images. Images saved in subfolders named after their respective labels.
@@ -19,15 +17,44 @@ Script for extracting features using the CNN model, from the raw image data in t
 Script for training the classical machine learning models and classifying the images. 
 utilizes feature extracted from the CNN model.
 
-5. evaluate.py
-Script used for evaluating the accuracy of trained machine learning models. Provides accuracy, confusion matrix, and the classification report.
-
-6. predict.py:
+5. predict.py:
 Script for predicting the class of an image using the saved .pkl models.
 
 
-**To evaluate the models, run the following commands:**
-python/python3 train_classical.py
+# **STEP-BY-STEP GUIDE**
+Take Note: Everything should be run through the terminal from main.py
 
-**To Predict, run the following commands:**
-python3 predict.py "FILE-PATH" --model "rf"
+Run main.py -h or --help if you need help with the commands.
+
+Please Run the following in Order:
+
+**STEP 1:**
+Feature Extracting using CNN model (Will Take 1-5Minutes)
+- Run in Terminal "python3/python main.py --extract_features"
+
+**STEP 2:**
+Training the Classical Machine Learning Models (Will Take 3-5Minutes)
+- Run in Terminal " python3/python main.py --train_classical "
+
+Evaluation of Confusion Matrix Should be Displayed
+
+**STEP 3:**
+Predicting the class of an image
+- Run in Terminal " python3/python main.py --predict "FILE-PATH" --model "rf" "
+- Sample Images are in src/predict
+
+Image should be classified and displayed as well as the likelyhood of the country that will be predicted.
+You may also add additional images to the predict folder and run the predict script to classify them.
+
+**Done!**
+
+
+
+
+
+
+
+
+
+
+

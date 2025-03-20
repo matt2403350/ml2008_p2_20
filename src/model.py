@@ -25,7 +25,7 @@ class CNNFeatureExtractor(nn.Module):
         self.fc1 = nn.Linear(128 * 28 * 28, 128)  # Adjust based on input image size
         self.fc2 = nn.Linear(128, num_classes)
 
-    def forward(self, x, extract_features=True):
+    def forward(self, x, extract_features=False):
         x = self.pool(F.relu(self.conv1(x)))
         x = self.pool(F.relu(self.conv2(x)))
         x = self.pool(F.relu(self.conv3(x)))
