@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from torchvision import transforms
 from PIL import Image
-from src.model import CNNFeatureExtractor  # Import the same CNN model used in training
+from model import CNNFeatureExtractor  # Import the same CNN model used in training
 
 # 🔹 Load trained models & preprocessing tools
 scaler = joblib.load("src/models/scaler.pkl")  # StandardScaler (used during training)

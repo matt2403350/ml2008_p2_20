@@ -5,7 +5,7 @@ import os
 import sys
 import argparse
 import subprocess
-from src.predict import predict_country
+#from src.predict import predict_country
 
 MODEL_PATH = "src/models/country_classifier.pth"
 
@@ -31,9 +31,13 @@ def main():
         print("Running extract_features.py...")
         subprocess.run([PYTHON_CMD, "src/extract_features.py"])
     elif args.predict:
+        print("Running predict.py...")
+        subprocess.run([PYTHON_CMD, "src/predict.py", args.predict, "--model", args.model])
+        """
         model_type = args.model if args.model else "rf"  # Default to Random Forest
         print(f"Predicting image using {model_type.upper()} model...")
         predict_country(image_path= args.predict, model_name=model_type)
+        """
     else:
         print("Please provide an argument. Use --help for more information.")
 
