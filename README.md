@@ -26,8 +26,8 @@ Script used for evaluating the accuracy of trained machine learning models. Prov
 Script for predicting the class of an image using the saved .pkl models.
 
 
-To evaluate the models, run the following commands:
+**To evaluate the models, run the following commands:**
 python/python3 train_classical.py
 
-To Predict, run the following commands:
+**To Predict, run the following commands:**
 python3 predict.py "FILE-PATH" --model "rf"
