@@ -20,8 +20,11 @@ Feature Extracting using CNN model (Will Take 1-3Minutes)
 **STEP 2:**
 Training the Classical Machine Learning Models (Will Take 3-5Minutes)
 - Run in Terminal " python3/python main.py --train_classical "
-
 Evaluation of Confusion Matrix Should be Displayed
+
+If it takes very long for it the train & evaluate you may upload a pre-trained model from the link below
+tinyurl.com/55wsvjmn
+
 
 **STEP 3:**
 Predicting the class of an image
