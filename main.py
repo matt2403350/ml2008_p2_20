@@ -2,6 +2,7 @@
 Entry Point to Call Training, Prediction and Evaluation
 """
 import os
+import platform
 import sys
 import argparse
 import subprocess
@@ -9,7 +10,7 @@ import subprocess
 
 MODEL_PATH = "src/models/country_classifier.pth"
 
-PYTHON_CMD = "python3" if sys.version_info.major == 3 else "python"
+PYTHON_CMD = "python" if platform.system() == "Windows" else "python3"
 
 def main():
     parser = argparse.ArgumentParser(description="SEA Image Classification Project:\n"
